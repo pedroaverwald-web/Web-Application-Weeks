@@ -1,0 +1,11 @@
+# Supabase CLI / GitHub integration config.
+# Linked remote project: dgqapmbmhircvjgpzqvu (calendar-weeks-2027, eu-central-1).
+# Unlisted settings use the Supabase CLI defaults.
+project_id = "calendar-weeks-2027"
+
+[api]
+schemas = ["public", "graphql_public"]
+max_rows = 1000
+
+[db]
+major_version = 17
