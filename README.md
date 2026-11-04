@@ -1,5 +1,7 @@
 # Calendar weeks 2027
 
+**Live app:** https://pedroaverwald-web.github.io/web-application-weeks/
+
 A small web app that shows all ISO calendar weeks (KW) of 2027. The data lives in Supabase; the app is hosted on Cloudflare Workers.
 
 - **Database:** Supabase project `calendar-weeks-2027` (Frankfurt), table `public.calendar_weeks`, 52 rows, read-only for the public via row level security.
