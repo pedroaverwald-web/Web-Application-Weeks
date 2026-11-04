@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calendar weeks 2027</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📅</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --paper: #f3f6f9;
+    --sheet: #ffffff;
+    --ink: #17283a;
+    --ink-soft: #5a6b7d;
+    --rule: #d6dee7;
+    --cobalt: #2f5bd3;
+    --cobalt-wash: #e4ebfb;
+    --q1: #2f5bd3; --q2: #1f8a70; --q3: #c9861a; --q4: #8a4fc7;
+    --radius: 6px;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --paper: #0f1822; --sheet: #16212e; --ink: #e6edf4; --ink-soft: #97a8ba;
+      --rule: #2a3949; --cobalt: #7d9cf0; --cobalt-wash: #1d2c4a;
+      --q1: #7d9cf0; --q2: #4fc2a2; --q3: #e5aa4a; --q4: #b88be6;
+    }
+  }
+  *, *::before, *::after { box-sizing: inherit; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 1rem/1.5 "Barlow", system-ui, sans-serif; }
+  .wrap { max-width: 72rem; margin-inline: auto; padding: 2rem 1.25rem 4rem; }
+
+  header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1.5rem; margin-bottom: 2rem; }
+  h1 { font: 600 clamp(2.75rem, 8vw, 5rem)/0.9 "Barlow Condensed", sans-serif; margin: 0; letter-spacing: -0.01em; }
+  h1 span { display: block; font-size: 0.42em; font-weight: 500; color: var(--ink-soft); letter-spacing: 0; margin-top: 0.4rem; }
+
+  .lookup { background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--radius); padding: 0.9rem 1rem; min-width: min(100%, 22rem); }
+  .lookup label { display: block; font-weight: 500; font-size: 0.875rem; margin-bottom: 0.35rem; }
+  .lookup input { font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; padding: 0.35rem 0.5rem; width: 100%; }
+  .lookup output { display: block; font-size: 0.875rem; color: var(--ink-soft); margin-top: 0.45rem; min-height: 1.3em; }
+  .lookup output b { color: var(--ink); font-weight: 600; }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.25rem; }
+  .filters button { font: 500 0.875rem "Barlow", sans-serif; color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 999px; padding: 0.3rem 0.85rem; cursor: pointer; }
+  .filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  .year { display: grid; gap: 0.5rem; }
+  .month { display: grid; grid-template-columns: 7rem 1fr; gap: 0.75rem; align-items: stretch; padding: 0.6rem 0; border-top: 1px solid var(--rule); }
+  .month h2 { margin: 0; font: 600 1.15rem/1.2 "Barlow Condensed", sans-serif; padding-top: 0.3rem; }
+  .month h2 small { display: block; font: 400 0.8rem "Barlow", sans-serif; color: var(--ink-soft); }
+  .weeks { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: 0.5rem; }
+
+  .week { all: unset; box-sizing: border-box; cursor: pointer; background: var(--sheet); border: 1px solid var(--rule); border-left: 4px solid var(--qc); border-radius: var(--radius); padding: 0.45rem 0.7rem 0.55rem; display: grid; grid-template-columns: auto 1fr; column-gap: 0.6rem; align-items: center; }
+  .week:hover { border-color: var(--qc); }
+  .week:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 2px; }
+  .week .n { font: 600 2.4rem/1 "Barlow Condensed", sans-serif; font-variant-numeric: tabular-nums; grid-row: span 2; }
+  .week .kw { font-size: 0.75rem; color: var(--ink-soft); }
+  .week .range { font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+  .week[aria-current="true"] { background: var(--cobalt-wash); border-color: var(--cobalt); }
+
+  .detail { position: sticky; bottom: max(1rem, env(safe-area-inset-bottom, 0px)); margin-top: 1.5rem; background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--radius); box-shadow: 0 8px 28px rgba(15, 30, 50, 0.14); padding: 1rem 1.1rem; }
+  .detail[hidden] { display: none; }
+  .detail-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+  .detail h3 { margin: 0; font: 600 1.6rem/1 "Barlow Condensed", sans-serif; }
+  .detail .close { font: inherit; font-size: 0.875rem; background: none; border: 1px solid var(--rule); color: var(--ink); border-radius: 4px; padding: 0.2rem 0.6rem; cursor: pointer; }
+  .days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.35rem; margin-top: 0.8rem; }
+  .day { text-align: center; padding: 0.4rem 0.2rem; border-radius: 4px; background: var(--paper); }
+  .day .dn { font-size: 0.75rem; color: var(--ink-soft); }
+  .day .dd { font: 600 1.3rem/1.1 "Barlow Condensed", sans-serif; }
+  .day .dm { font-size: 0.72rem; color: var(--ink-soft); }
+  .day.weekend .dd { color: var(--ink-soft); }
+
+  .state { padding: 3rem 0; text-align: center; color: var(--ink-soft); }
+  .state button { font: inherit; margin-top: 0.75rem; background: var(--ink); color: var(--paper); border: 0; border-radius: 4px; padding: 0.4rem 1rem; cursor: pointer; }
+  footer { margin-top: 3rem; font-size: 0.8rem; color: var(--ink-soft); }
+
+  @media (max-width: 560px) {
+    .month { grid-template-columns: 1fr; gap: 0.4rem; }
+    .month h2 small { display: inline; margin-left: 0.4rem; }
+    .weeks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .detail:not([hidden]) { animation: rise 0.22s ease-out; }
+    @keyframes rise { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <h1>Calendar weeks 2027<span>ISO weeks, Monday to Sunday</span></h1>
+    <div class="lookup">
+      <label for="date">Which week is a date in?</label>
+      <input id="date" type="date" min="2027-01-01" max="2028-01-02">
+      <output id="answer" for="date" aria-live="polite"></output>
+    </div>
+  </header>
+
+  <nav class="filters" aria-label="Quarter">
+    <button type="button" data-q="" aria-pressed="true">Whole year</button>
+    <button type="button" data-q="1" aria-pressed="false">Q1</button>
+    <button type="button" data-q="2" aria-pressed="false">Q2</button>
+    <button type="button" data-q="3" aria-pressed="false">Q3</button>
+    <button type="button" data-q="4" aria-pressed="false">Q4</button>
+  </nav>
+
+  <section id="year" class="year" aria-live="polite">
+    <p class="state">Loading calendar weeks…</p>
+  </section>
+
+  <aside id="detail" class="detail" hidden aria-label="Week details">
+    <div class="detail-head">
+      <h3 id="detail-title"></h3>
+      <button type="button" class="close" id="close">Close</button>
+    </div>
+    <div id="detail-sub" class="kw"></div>
+    <div id="days" class="days"></div>
+  </aside>
+
+  <footer>Weeks follow ISO 8601: week 1 is the week with the year’s first Thursday. A week belongs to the month its Thursday falls in.</footer>
+</main>
+
+<script>
+  // Public, read-only connection to Supabase (the table only allows SELECT via row level security).
+  const SUPABASE_URL = "https://dgqapmbmhircvjgpzqvu.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_liMuvbpsvq12mS_31sMW1Q_I6nDkL-Z";
+
+  const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  const fmtShort = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+  const fmtLong = new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+
+  const yearEl = document.getElementById("year");
+  const detail = document.getElementById("detail");
+  let weeks = [];
+  let quarter = "";
+  let selected = null;
+
+  const d = (s) => new Date(s + "T00:00:00Z");
+  const range = (w) => `${fmtShort.format(d(w.start_date))} – ${fmtShort.format(d(w.end_date))}`;
+
+  async function load() {
+    yearEl.innerHTML = '<p class="state">Loading calendar weeks…</p>';
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/calendar_weeks?select=*&iso_year=eq.2027&order=week_number`, {
+        headers: { apikey: SUPABASE_KEY, Accept: "application/json" },
+      });
+      if (!res.ok) throw new Error(`Supabase answered ${res.status}`);
+      weeks = await res.json();
+      render();
+    } catch (err) {
+      yearEl.replaceChildren();
+      const p = document.createElement("p");
+      p.className = "state";
+      p.textContent = `The calendar weeks couldn’t be loaded (${err.message}). Check your connection and try again.`;
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = "Try again";
+      b.addEventListener("click", load);
+      p.append(document.createElement("br"), b);
+      yearEl.append(p);
+    }
+  }
+
+  function render() {
+    yearEl.replaceChildren();
+    const shown = weeks.filter((w) => !quarter || String(w.quarter) === quarter);
+    for (let m = 1; m <= 12; m++) {
+      const list = shown.filter((w) => w.month === m);
+      if (!list.length) continue;
+      const row = document.createElement("div");
+      row.className = "month";
+      const h = document.createElement("h2");
+      h.textContent = MONTHS[m - 1];
+      const sm = document.createElement("small");
+      sm.textContent = `${list.length} weeks`;
+      h.append(sm);
+      const grid = document.createElement("div");
+      grid.className = "weeks";
+      for (const w of list) {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "week";
+        b.style.setProperty("--qc", `var(--q${w.quarter})`);
+        b.setAttribute("aria-current", String(selected === w.week_number));
+        b.setAttribute("aria-label", `${w.label}, ${range(w)}`);
+        b.innerHTML = '<span class="n"></span><span class="kw"></span><span class="range"></span>';
+        b.querySelector(".n").textContent = String(w.week_number).padStart(2, "0");
+        b.querySelector(".kw").textContent = `Quarter ${w.quarter}`;
+        b.querySelector(".range").textContent = range(w);
+        b.addEventListener("click", () => select(w.week_number));
+        grid.append(b);
+      }
+      row.append(h, grid);
+      yearEl.append(row);
+    }
+  }
+
+  function select(n) {
+    selected = n;
+    const w = weeks.find((x) => x.week_number === n);
+    document.querySelectorAll(".week").forEach((el) => el.setAttribute("aria-current", "false"));
+    render();
+    if (!w) { detail.hidden = true; return; }
+    document.getElementById("detail-title").textContent = w.label;
+    document.getElementById("detail-sub").textContent = `${range(w)}, counted in ${MONTHS[w.month - 1]}, quarter ${w.quarter}`;
+    const days = document.getElementById("days");
+    days.replaceChildren();
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(d(w.start_date).getTime() + i * 86400000);
+      const cell = document.createElement("div");
+      cell.className = "day" + (i >= 5 ? " weekend" : "");
+      cell.innerHTML = '<div class="dn"></div><div class="dd"></div><div class="dm"></div>';
+      cell.querySelector(".dn").textContent = DAYS[i];
+      cell.querySelector(".dd").textContent = day.getUTCDate();
+      cell.querySelector(".dm").textContent = MONTHS[day.getUTCMonth()].slice(0, 3);
+      days.append(cell);
+    }
+    detail.hidden = false;
+  }
+
+  document.getElementById("close").addEventListener("click", () => { selected = null; detail.hidden = true; render(); });
+
+  document.querySelectorAll(".filters button").forEach((b) => b.addEventListener("click", () => {
+    quarter = b.dataset.q;
+    document.querySelectorAll(".filters button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    render();
+  }));
+
+  document.getElementById("date").addEventListener("input", (e) => {
+    const out = document.getElementById("answer");
+    const v = e.target.value;
+    const w = v && weeks.find((x) => x.start_date <= v && v <= x.end_date);
+    out.replaceChildren();
+    if (!v) return;
+    if (!w) { out.textContent = "That date isn’t in an ISO week of 2027. Pick a date from 4 January 2027 to 2 January 2028."; return; }
+    const b = document.createElement("b");
+    b.textContent = w.label;
+    out.append(`${fmtLong.format(d(v))} is in `, b, ` (${range(w)}).`);
+    if (quarter && String(w.quarter) !== quarter) {
+      quarter = "";
+      document.querySelectorAll(".filters button").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.q === "")));
+    }
+    select(w.week_number);
+  });
+
+  load();
+</script>
+</body>
+</html>

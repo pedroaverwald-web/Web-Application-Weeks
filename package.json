@@ -1,0 +1,13 @@
+{
+  "name": "calendar-weeks-2027",
+  "private": true,
+  "version": "1.0.0",
+  "description": "ISO calendar weeks 2027, served from Supabase, hosted on Cloudflare Workers",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.40.0"
+  }
+}
